@@ -1,0 +1,25 @@
+# Local secrets and environment overrides
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+*.local
+
+# Dependency and build output
+node_modules/
+dist/
+build/
+
+# Editor and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bak
+~$*
