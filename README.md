@@ -239,6 +239,21 @@ Deploy it as a Web App. After changing the script later, deploy a **new version*
 
 The script creates an `Orders` tab automatically if it does not exist.
 
+The `Status` column uses a dropdown with these options:
+
+```text
+New
+Processing
+Ready
+Completed
+Cancelled
+```
+
+After deploying a new Apps Script version, select `setupOrdersSheet` in the
+Apps Script editor and click **Run** once to apply the dropdown to the existing
+sheet immediately. New order submissions also apply and maintain the dropdown
+automatically.
+
 ## Local development
 
 The site can be served locally instead of opening `file://` directly.

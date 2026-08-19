@@ -10,6 +10,14 @@ const SPREADSHEET_ID = "PASTE_YOUR_SPREADSHEET_ID_HERE";
 const SHEET_NAME = "Orders";
 const ORDER_SECRET = "PASTE_THE_SAME_ORDER_SECRET_HERE";
 
+const STATUS_OPTIONS = [
+  "New",
+  "Processing",
+  "Ready",
+  "Completed",
+  "Cancelled"
+];
+
 const HEADERS = [
   "Order Number",
   "Order Date",
@@ -27,6 +35,8 @@ const HEADERS = [
   "Status"
 ];
 
+const STATUS_COLUMN = HEADERS.indexOf("Status") + 1;
+
 function safeCell(value) {
   if (value === null || value === undefined) return "";
   const text = String(value);
@@ -37,6 +47,27 @@ function jsonResponse(data) {
   return ContentService
     .createTextOutput(JSON.stringify(data))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+function getStatusValidation() {
+  return SpreadsheetApp.newDataValidation()
+    .requireValueInList(STATUS_OPTIONS, true)
+    .setAllowInvalid(false)
+    .setHelpText("Choose an order status from the dropdown.")
+    .build();
+}
+
+function applyStatusDropdown(sheet) {
+  const dataRowCount = Math.max(sheet.getMaxRows() - 1, 1);
+  sheet
+    .getRange(2, STATUS_COLUMN, dataRowCount, 1)
+    .setDataValidation(getStatusValidation());
+}
+
+// Run this once from the Apps Script editor after deploying an update to add
+// the dropdown immediately. Incoming orders also keep it configured.
+function setupOrdersSheet() {
+  getOrdersSheet();
 }
 
 function getOrdersSheet() {
@@ -52,6 +83,8 @@ function getOrdersSheet() {
     sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight("bold");
     sheet.setFrozenRows(1);
   }
+
+  applyStatusDropdown(sheet);
 
   return sheet;
 }
@@ -140,6 +173,9 @@ function doPost(e) {
       sheet.getRange(row, 2).setNumberFormat("yyyy-mm-dd hh:mm:ss");
       sheet.getRange(row, 5).setNumberFormat('₱#,##0.00');
       sheet.getRange(row, 9, 1, 2).setWrap(true);
+      sheet
+        .getRange(row, STATUS_COLUMN)
+        .setDataValidation(getStatusValidation());
 
       return jsonResponse({
         success: true,
