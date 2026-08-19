@@ -776,20 +776,17 @@
     .checkout-summary { margin-bottom: 22px; padding: 18px; border-radius: var(--radius-lg); background: var(--surface-soft); }
     .summary-line { display: flex; justify-content: space-between; gap: 15px; margin-bottom: 10px; font-size: 14px; }
     .summary-total { display: flex; justify-content: space-between; gap: 15px; margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border); font-size: 20px; font-weight: 900; }
-    .payment-options { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; margin-bottom: 18px; }
+    .payment-options { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; margin-bottom: 18px; }
     .payment-option { min-height: 100px; padding: 16px; border: 2px solid var(--border); border-radius: var(--radius-lg); color: var(--text); background: var(--surface); text-align: left; }
     .payment-option.selected { border-color: var(--accent); background: var(--accent-soft); box-shadow: 0 0 0 4px rgba(139,111,196,.1); }
     .payment-option strong { display: block; margin-bottom: 5px; font-size: 17px; }
     .payment-option span { color: var(--muted); font-size: 13px; }
-    .checkout-qr-area { display: none; margin-bottom: 18px; padding: 18px; border-radius: var(--radius-lg); background: var(--surface-soft); text-align: center; }
-    .checkout-qr-area.visible { display: block; }
     .checkout-pixel-area { display: none; margin-bottom: 18px; padding: 18px; border-radius: var(--radius-lg); background: var(--surface-soft); }
     .checkout-pixel-area.visible { display: block; }
     .checkout-pixel-area label { display: block; margin-bottom: 7px; font-size: 13px; font-weight: 800; color: var(--text); }
     .checkout-pixel-area input { width: 100%; margin-bottom: 10px; }
     .checkout-pixel-note { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
     .pixel-session-note { margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: rgba(255,255,255,.72); font-size: 12px; color: var(--muted); }
-    .checkout-qr-image { width: min(100%,300px); max-height: 340px; margin: 0 auto 12px; object-fit: contain; }
     .checkout-message { min-height: 20px; margin: 10px 0; color: var(--danger); font-size: 14px; font-weight: 750; text-align: center; }
     .checkout-details { margin: 0 0 22px; padding: 18px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: rgba(255,255,255,.72); }
     .checkout-details-head { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; margin-bottom:14px; }
@@ -1366,8 +1363,7 @@
     .category-admin-chip,
     .inventory-status,
     .print-result,
-    .checkout-summary,
-    .checkout-qr-area {
+    .checkout-summary {
       border-width: 2px;
       border-color: var(--ink);
     }
@@ -1834,8 +1830,7 @@
     .category-admin-chip,
     .inventory-status,
     .print-result,
-    .checkout-summary,
-    .checkout-qr-area {
+    .checkout-summary {
       border-width: 1px;
       border-color: var(--border);
     }
@@ -2805,17 +2800,9 @@
           <button class="payment-option" type="button" data-payment="cash">
             <strong>Cash</strong><span>Pay the shop staff directly.</span>
           </button>
-          <button class="payment-option" type="button" data-payment="qr">
-            <strong>Scan QR</strong><span>Pay through GCash, Maya, or your bank.</span>
-          </button>
           <button class="payment-option" type="button" data-payment="pixel">
             <strong>PIXEL</strong><span>Open a secure Epaygames checkout with your total prefilled.</span>
           </button>
-        </div>
-
-        <div id="checkoutQrArea" class="checkout-qr-area">
-          <img id="checkoutQrImage" class="checkout-qr-image" alt="Payment QR">
-          <p id="missingQrMessage">The shop has not uploaded a payment QR.</p>
         </div>
 
         <div id="checkoutPixelArea" class="checkout-pixel-area">
@@ -2954,9 +2941,6 @@
     const closeCheckoutButton = $("closeCheckoutButton");
     const checkoutForm = $("checkoutForm");
     const checkoutSummary = $("checkoutSummary");
-    const checkoutQrArea = $("checkoutQrArea");
-    const checkoutQrImage = $("checkoutQrImage");
-    const missingQrMessage = $("missingQrMessage");
     const checkoutPixelArea = $("checkoutPixelArea");
     const pixelSessionNote = $("pixelSessionNote");
     const checkoutOrderReference = $("checkoutOrderReference");
@@ -4164,7 +4148,6 @@
       selectedPayment = "";
       resetPixelSession();
       paymentButtons.forEach((button) => button.classList.remove("selected"));
-      checkoutQrArea.classList.remove("visible");
       checkoutPixelArea.classList.remove("visible");
       completeCheckoutButton.textContent = "Complete checkout";
       completeCheckoutButton.disabled = true;
@@ -4175,21 +4158,6 @@
       if (selectedPayment !== method) resetPixelSession();
       selectedPayment = method;
       paymentButtons.forEach((button) => button.classList.toggle("selected", button.dataset.payment === method));
-
-      if (method === "qr") {
-        const qr = paymentQrData;
-        checkoutQrArea.classList.add("visible");
-        if (qr) {
-          checkoutQrImage.src = qr;
-          checkoutQrImage.style.display = "block";
-          missingQrMessage.style.display = "none";
-        } else {
-          checkoutQrImage.style.display = "none";
-          missingQrMessage.style.display = "block";
-        }
-      } else {
-        checkoutQrArea.classList.remove("visible");
-      }
 
       checkoutPixelArea.classList.toggle("visible", method === "pixel");
       completeCheckoutButton.textContent = method === "pixel" ? "Open PIXEL payment" : "Complete checkout";

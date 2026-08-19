@@ -44,7 +44,6 @@ Every order currently asks for the same buyer information:
 Supported payment methods:
 
 - Cash
-- QR payment
 - PIXEL / Epaygames
 
 Every checkout receives an order reference in the format:
@@ -150,7 +149,6 @@ Browser --> Web Bluetooth --> NIIMBOT printer
 ```text
 naya-shop/
 ├── index.html
-├── shop.html
 ├── niimbluelib.min.js
 ├── cloudflare/
 │   └── naya-pixel-checkout-worker.js
@@ -159,7 +157,7 @@ naya-shop/
 └── README.md
 ```
 
-`index.html` and `shop.html` are the same storefront source in this package. `index.html` is the version intended for deployment at the root URL.
+`index.html` is the storefront source and is intended for deployment at the root URL.
 
 ### NIIMBlue library file
 
